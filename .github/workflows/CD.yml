@@ -1,0 +1,42 @@
+name: CD
+run-name: ${{ github.actor }} is acting GitHub Actions
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+          registry-url: 'https://npm.pkg.github.com'
+        
+      - name: Install npm package
+        run: npm ci
+
+      - name: Set up git user
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'whg4@gmail.com'
+      
+      - name: Patch Version
+        run: npm version patch
+
+      # - name: Publish
+      #   run: npm publish
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+  
+
+      
