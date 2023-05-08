@@ -1,7 +1,14 @@
 {
   "name": "github-actions-demo",
-  "version": "0.1.0",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whg4/github-actions-demo.git"
+  },
+  "publishConfig": {
+    "@whg4:registry": "https://npm.pkg.github.com"
+  },
+  "version": "0.0.1",
+  "private": false,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
