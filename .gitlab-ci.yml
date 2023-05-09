@@ -1,0 +1,64 @@
+image: node:16.18.1
+
+stages:
+  - install
+  - lint
+  - test
+  - publish
+
+### 配置缓存
+cache:
+  key:
+    files:
+      - package.json
+  paths:
+    - node_modules/
+
+# 安装依赖
+job_install:
+  only:
+    - merged_requests
+  stage: install
+  before_script:
+    - echo 'Install Dependencies'
+  script:
+    - yarn config set registry https://registry.npm.taobao.org/
+    - yarn
+  after_script:
+    - echo 'Install Dependencies Done'
+
+# lint
+job_lint:
+  only:
+    - merged_requests
+  stage: lint
+  before_script:
+    - echo 'Lint'
+  script:
+    - yarn lint
+  after_script:
+    - echo 'Lint Done'
+
+# test
+job_test:
+  only:
+    - merged_requests
+  stage: test
+  before_script:
+    - echo 'Test'
+  script:
+    - yarn test
+  after_script:
+    - echo 'Test Done'
+
+job_publish:
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master' && $CI_PINELINE_SOURCE == 'push'
+  stage: publish
+  before_script:
+    - echo 'Publish'
+  script:
+    - yarn build
+    - yarn publish
+  after_script:
+    - echo 'Publish Done'
