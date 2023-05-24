@@ -52,13 +52,15 @@ job_test:
     - echo 'Test Done'
 
 job_publish:
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'master' && $CI_PINELINE_SOURCE == 'push'
+  only:
+    - master
+    - pushes
+  except:
+    - if $CI_COMMIT_MESSAGE =~ /^release/
   stage: publish
   before_script:
     - echo 'Publish'
   script:
-    - yarn build
-    - yarn publish
+    - node ./scripts/publish.js $GITLAB_TOKEN $NPM_TOKEN
   after_script:
     - echo 'Publish Done'
